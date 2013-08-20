@@ -1,0 +1,192 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA Compatible" content="IE=edge,chrome=1">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+	
+	<title>Expend</title>
+	
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a1/jquery.mobile-1.0a1.min.css" />
+	<link rel="apple-touch-icon-precomposed" href="img/icon.png">
+	<link rel="apple-touch-startup-image" href="img/splash.png">
+	<link rel="stylesheet" href="css/geojoy.css">
+
+	<script src="http://code.jquery.com/jquery-1.4.3.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.0a1/jquery.mobile-1.0a1.min.js"></script>
+	<script src="http://maps.google.com/maps/api/js?sensor=true" type="text/javascript"></script>
+	<script src="js/geoJoy.js" type="text/javascript"></script>
+	
+	<!-- DELETE THIS IF YOU ARE FORKING, DEVELOPING AND/OR HOSTING ON YOUR OWN!
+	
+	<script type="text/javascript">
+
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-21568307-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+
+	</script>
+	
+	DELETE THIS IF YOU ARE FORKING, DEVELOPING AND/OR HOSTING ON YOUR OWN! -->
+	
+</head>
+<body class="index" onload="getStorageQty()">
+	<div data-role="page" id="home">
+		<header data-nobackbtn="true" data-role="header">
+			<h1><img src="img/title.png" alt="geoJoy"></h1>
+		</header>
+		<div data-role="content">
+			<ul data-role="listview" data-inset="true" data-theme="c" data-dividertheme="a">
+				<li data-icon="map-mark">
+					<a href="#add" onclick="currentLoc()" title="View location"> รายการใหม่ </a>
+				</li>
+				<li data-icon="grid">
+					<a href="#loc_mgmt" title="Your locations"> รายการทั้งหมด </a>
+					<span class="ui-li-count" id="storageQty"></span>
+				</li>
+			</ul>
+			<!-- <ul data-role="listview" data-inset="true" data-theme="c" data-dividertheme="a">
+				<li data-role="list-divider">
+					<h2>About</h2> 
+				</li>
+				<li>
+					<a href="#howto" title="How to use this app">Help</a>
+				</li>
+				<li>
+					<a href="#info" title="About us">Info</a>
+				</li>
+			</ul> --> 
+		</div>
+	</div>
+	
+	<div data-role="page" id="loc_mgmt">
+		<header data-nobackbtn="true" data-role="header" name="header">
+			<h1><img src="img/title.png" alt="geoJoy"></h1>
+		</header>
+		<div data-role="content" id="content">
+			<div id="toolbar" data-role="controlgroup" data-type="horizontal"><a href="#home" title="Back home" data-role="button" data-icon="refresh" data-theme="c" class="toolbar_link" data-transition="slide">หน้าแรก</a><a href="#add" title="Add new item" data-role="button" data-icon="map-mark" data-theme="c" class="toolbar_link" data-transition="fade" > + </a><a href="#loc_mgmt" title="Manage items" data-role="button" data-icon="grid" data-theme="c" class="toolbar_link" data-transition="fade">จัดการ</a></div>
+			<ul data-role="listview" id="locationItems" data-inset="true" data-theme="c" data-dividertheme="a">
+				<li data-role="list-divider" id="list_header"><h2>รายการ</h2></li>
+				<li data-role="list-divider" class="itemsTitle" id="architecture">ค่าอื่นๆ</li>
+				<li data-role="list-divider" class="itemsTitle" id="art">ค่าไฟ</li>
+				<li data-role="list-divider" class="itemsTitle" id="education">ค่าน้ำ</li>
+				<li data-role="list-divider" class="itemsTitle" id="entertainment">ค่าบัตรเครดิต</li>
+				<li data-role="list-divider" class="itemsTitle" id="family">ค่ายารักษาโรค</li>
+				<li data-role="list-divider" class="itemsTitle" id="food">ค่าอาหารและเครื่องดื่ม</li>
+				<li data-role="list-divider" class="itemsTitle" id="friends">ค่าเช่าห้อง</li>
+				<li data-role="list-divider" class="itemsTitle" id="landscape">ค่าน้ำมัน</li>
+				<li data-role="list-divider" class="itemsTitle" id="museum">ค่าเสื้อผ้า</li>
+				<li data-role="list-divider" class="itemsTitle" id="museum">ค่าโดยสาร</li>
+				<li data-role="list-divider" class="itemsTitle" id="professional">รายรับถ</li>
+							</ul>
+			<div id="geoMessage"></div>
+			<div data-type="horizontal" data-role="controlgroup">
+				<a data-icon="arrow-u" title="Scroll back to Top" data-role="button"> บนสุด </a>
+				<a href="#clear" data-icon="delete" title="Delete all entries" data-role="button"> ล้างค่าทั้งหมด </a>
+			</div>
+		</div>
+	</div>
+	
+	<div data-role="page" id="clear">
+		<header data-nobackbtn="true" data-role="header">
+			<h1><img src="img/title.png" alt="geoJoy"></h1>
+		</header>
+		<div data-role="content">
+			<div id="toolbar" data-role="controlgroup" data-type="horizontal"><a href="#home" title="Back home" data-role="button" data-icon="refresh" data-theme="c" class="toolbar_link" data-transition="slide">หน้าแรก</a><a href="#add" title="Add new item" data-role="button" data-icon="map-mark" data-theme="c" class="toolbar_link" data-transition="fade" > + </a><a href="#loc_mgmt" title="Manage items" data-role="button" data-icon="grid" data-theme="c" class="toolbar_link" data-transition="fade">จัดการ </a></div>
+			<h3> ล้างค่าทั้งหมด </h3>
+			<p>คุณมั่นใจว่าจะลบข้อมูลทั้งหมดจริงหรือ ? <br> ไม่สำเร็จ </p>
+			<div data-type="horizontal" data-role="controlgroup">
+				<a href="#home" onclick="deleteAll()" title="Clear Records" data-icon="check" data-role="button"> ใช่ </a>
+				<a href="#loc_mgmt" title="Cancel Deletion" data-icon="delete" data-role="button"> ยกเลิก </a>
+			</div>
+		</div>
+	</div>
+	
+	<div data-role="page" id="add">
+		<header data-nobackbtn="true" data-role="header">
+			<h1><img src="img/title.png" alt="geoJoy"></h1>
+		</header>
+		<div data-role="content" id="geo_content">
+			<div id="toolbar" data-role="controlgroup" data-type="horizontal"><a href="#home" title="Back home" data-role="button" data-icon="refresh" data-theme="c" class="toolbar_link" data-transition="slide">หน้าแรก</a><a href="#add" title="Add new item" data-role="button" data-icon="map-mark" data-theme="c" class="toolbar_link" data-transition="fade" > + </a><a href="#loc_mgmt" title="Manage items" data-role="button" data-icon="grid" data-theme="c" class="toolbar_link" data-transition="fade"> จัดการหน้า </a></div>
+			<label for="nameInput"> รายละเอียด </label>
+			<input type="text" name="nameInput" id="nameInput">
+			<label for="selectType"> ประเภท </label>
+			<select name="selectType" id="selectType">
+				<option value="architecture">ค่าอื่นๆ</option>
+				<option value="art">ค่าไฟ</option>
+				<option value="education">ค่าน้ำ</option>
+				<option value="entertainment">ค่าบัตรเครดิต</option>
+				<option value="family">ค่ายารักษาโรค</option>
+				<option value="food">ค่าอาหารและเครื่องดื่ม</option>
+				<option value="friends">ค่าเช่าห้อง</option>
+				<option value="landscape">ค่าน้ำมัน</option>
+				<option value="museum">ค่าเสื้อผ้า</option>
+				<option value="party">ค่ารถโดยสาร</option>
+				<option value="professional">รายรับ</option>
+				
+			</select> 
+			<input type="hidden" name="coordinates" id="coordinates">
+			<input type="hidden" name="itemId"  id="itemId">
+			<div id="mapImage"></div>
+			<div data-role="button" id="geoButton" data-theme="a" onclick="getGeo()"> แสดงสถานที่ </div>
+			<div data-role="controlgroup" id="clearSaveButtons" style="display:none;" data-type="horizontal">
+				<div data-role="button" id="saveButton" data-theme="b" onclick="saveItem()" data-icon="check">บันทึก</div>
+				<div data-role="button" id="clearButton" data-theme="c" onclick="clearItem()" data-icon="back">ล้างข้อมูล </div>
+			</div>
+		</div>
+	</div>
+
+	<div data-role="page" id="itemView">
+		<header data-nobackbtn="true" data-role="header">
+			<h1><img src="img/title.png" alt="geoJoy"></h1>
+		</header>
+		<div data-role="content" id="itemContent">
+			<div id="toolbar" data-role="controlgroup" data-type="horizontal"><a href="#home" title="Back home" data-role="button" data-icon="refresh" data-theme="c" class="toolbar_link" data-transition="slide">หน้าแรก </a><a href="#add" title="Add new item" data-role="button" data-icon="map-mark" data-theme="c" class="toolbar_link" data-transition="fade" > + </a><a href="#loc_mgmt" title="Manage items" data-role="button" data-icon="grid" data-theme="c" class="toolbar_link" data-transition="fade">หน้าแรก</a></div>
+			<ul data-role="listview" data-theme="c" data-dividertheme="a">
+				<li data-role="list-divider" id="itemListType">ประเภท</li>
+				<li data-role="list-divider" id="itemListName">ชื่อ</li>
+			</ul>
+			<div id="itemListMap"></div>
+			<div>
+				<a href="#delItem" data-icon="delete" data-role="button">ลบข้อมูล</a>
+			</div>
+			<input type="hidden" name="itemKey" id="itemKey">
+		</div>
+	</div>
+
+	<div data-role="page" id="delItem">
+		<header data-nobackbtn="true" data-role="header">
+			<h1><img src="img/title.png" alt="geoJoy"></h1>
+		</header>
+		<div data-role="content">
+			<div id="toolbar" data-role="controlgroup" data-type="horizontal"><a href="#home" title="Back home" data-role="button" data-icon="refresh" data-theme="c" class="toolbar_link" data-transition="slide">หน้าแรก</a><a href="#add" title="Add new item" data-role="button" data-icon="map-mark" data-theme="c" class="toolbar_link" data-transition="fade" >+</a><a href="#loc_mgmt" title="Manage items" data-role="button" data-icon="grid" data-theme="c" class="toolbar_link" data-transition="fade">จัดการ</a></div>
+			<p>คุณมั่นใจว่าจะลบข้อมูลทั้งหมดจริงหรือ ? <span id="item2Del"></span>?</p>
+			<div data-role="controlgroup" data-type="horizontal">
+				<a href="#home" onclick="deleteItem()" title="Clear Item" data-icon="check" data-role="button">ใช่</a>
+				<a href="#itemView" title="Cancel Deletion" data-icon="delete" data-role="button">ยกเลิก</a>
+			</div>
+			<input id="itemKey2Del" type="hidden">
+		</div>
+	</div>
+
+		
+	<div data-role="page" id="info">
+		<header data-nobackbtn="true" data-role="header">
+			<h1><img src="img/title.png" alt="geoJoy"></h1>
+		</header>
+		<div data-role="content">
+			<div id="toolbar" data-role="controlgroup" data-type="horizontal"><a href="#home" title="Back home" data-role="button" data-icon="refresh" data-theme="c" class="toolbar_link" data-transition="slide">หน้าแรก</a><a href="#add" title="Add new item" data-role="button" data-icon="map-mark" data-theme="c" class="toolbar_link" data-transition="fade" >+</a><a href="#loc_mgmt" title="Manage items" data-role="button" data-icon="grid" data-theme="c" class="toolbar_link" data-transition="fade">จัดการ</a></div>
+		
+		</div>
+	</div>
+	
+</body>
+</html>
